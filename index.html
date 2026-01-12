@@ -258,6 +258,37 @@
                     </button>
                 </div>
 
+                <!-- 5-Year Savings Prediction -->
+                <div class="card prediction-card" style="margin-bottom: 2rem;">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-crystal-ball" style="color: var(--primary-500); margin-right: 0.5rem;"></i>
+                            5-Year Savings Projection
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="prediction-summary">
+                            <div class="prediction-item current">
+                                <span class="prediction-label">Current Savings</span>
+                                <span class="prediction-value" id="currentTotalSavings">RM 0</span>
+                            </div>
+                            <div class="prediction-arrow">
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                            <div class="prediction-item future">
+                                <span class="prediction-label">In 5 Years</span>
+                                <span class="prediction-value" id="fiveYearSavings">RM 0</span>
+                            </div>
+                        </div>
+                        <div class="prediction-details" id="predictionDetails">
+                            <!-- Filled by JS -->
+                        </div>
+                        <div class="prediction-chart-container">
+                            <canvas id="savingsProjectionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="goals-grid" id="goalsGrid">
                     <!-- Filled by JS -->
                 </div>

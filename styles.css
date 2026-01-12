@@ -844,6 +844,118 @@ body {
     color: var(--text-primary);
 }
 
+/* ===== Savings Prediction Card ===== */
+.prediction-card {
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--primary-50) 100%);
+    border: 1px solid var(--primary-200);
+}
+
+[data-theme="dark"] .prediction-card {
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(20, 184, 166, 0.1) 100%);
+    border-color: var(--border-color);
+}
+
+.prediction-summary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    padding: 1.5rem;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    margin-bottom: 1.5rem;
+}
+
+.prediction-item {
+    text-align: center;
+}
+
+.prediction-item .prediction-label {
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+}
+
+.prediction-item .prediction-value {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.prediction-item.future .prediction-value {
+    color: var(--primary-600);
+}
+
+.prediction-arrow {
+    font-size: 1.5rem;
+    color: var(--primary-500);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: translateX(0); }
+    50% { opacity: 0.5; transform: translateX(5px); }
+}
+
+.prediction-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.prediction-detail-item {
+    background: var(--bg-tertiary);
+    padding: 1rem;
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.prediction-detail-item .icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+
+.prediction-detail-item .icon.asb { background: #e8f5e9; color: #2e7d32; }
+.prediction-detail-item .icon.versa { background: #e3f2fd; color: #1565c0; }
+.prediction-detail-item .icon.gold { background: #fff8e1; color: #f9a825; }
+.prediction-detail-item .icon.mae { background: #fce4ec; color: #c2185b; }
+
+.prediction-detail-item .info h5 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.125rem;
+}
+
+.prediction-detail-item .info .current {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.prediction-detail-item .info .future {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--primary-600);
+}
+
+.prediction-chart-container {
+    height: 250px;
+    position: relative;
+}
+
 /* ===== Goals Cards ===== */
 .goals-grid {
     display: grid;

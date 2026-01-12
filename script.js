@@ -48,10 +48,10 @@ const App = {
     ],
     
     goals: [
-        { id: 1, name: 'ASB', target: 6000, current: 5500, deadline: '2026-12-31', monthlyTarget: 500 },
-        { id: 2, name: 'Versa', target: 1800, current: 1650, deadline: '2026-12-31', monthlyTarget: 150 },
-        { id: 3, name: 'Public Gold', target: 1200, current: 1100, deadline: '2026-12-31', monthlyTarget: 100 },
-        { id: 4, name: 'Tabung Mae', target: 600, current: 550, deadline: '2026-12-31', monthlyTarget: 50 }
+        { id: 1, name: 'ASB', target: 6000, current: 1180.61, deadline: '2026-12-31', monthlyTarget: 500 },
+        { id: 2, name: 'Versa', target: 1800, current: 354.18, deadline: '2026-12-31', monthlyTarget: 150 },
+        { id: 3, name: 'Public Gold', target: 1200, current: 236.12, deadline: '2026-12-31', monthlyTarget: 100 },
+        { id: 4, name: 'Tabung Mae', target: 600, current: 118.06, deadline: '2026-12-31', monthlyTarget: 50 }
     ],
     
     settings: {
@@ -428,6 +428,164 @@ function renderGoals() {
             </div>
         `;
     }).join('');
+    
+    // Render savings prediction
+    renderSavingsPrediction();
+}
+
+// ===== Render 5-Year Savings Prediction =====
+let savingsProjectionChart;
+
+function renderSavingsPrediction() {
+    // Calculate current total savings
+    const currentTotal = App.goals.reduce((sum, g) => sum + g.current, 0);
+    
+    // Calculate monthly contribution total
+    const monthlyTotal = App.goals.reduce((sum, g) => sum + (g.monthlyTarget || 0), 0);
+    
+    // Calculate 5-year projection (60 months)
+    const months = 60;
+    const fiveYearTotal = currentTotal + (monthlyTotal * months);
+    
+    // Update summary values
+    document.getElementById('currentTotalSavings').textContent = formatCurrency(currentTotal);
+    document.getElementById('fiveYearSavings').textContent = formatCurrency(fiveYearTotal);
+    
+    // Render individual goal predictions
+    const detailsContainer = document.getElementById('predictionDetails');
+    if (detailsContainer) {
+        const iconClasses = {
+            'ASB': 'asb',
+            'Versa': 'versa',
+            'Public Gold': 'gold',
+            'Tabung Mae': 'mae'
+        };
+        
+        const iconSymbols = {
+            'ASB': 'fa-landmark',
+            'Versa': 'fa-mobile-alt',
+            'Public Gold': 'fa-coins',
+            'Tabung Mae': 'fa-piggy-bank'
+        };
+        
+        detailsContainer.innerHTML = App.goals.map(g => {
+            const monthlyContrib = g.monthlyTarget || 0;
+            const fiveYearValue = g.current + (monthlyContrib * 60);
+            const iconClass = iconClasses[g.name] || 'asb';
+            const iconSymbol = iconSymbols[g.name] || 'fa-piggy-bank';
+            
+            return `
+                <div class="prediction-detail-item">
+                    <div class="icon ${iconClass}">
+                        <i class="fas ${iconSymbol}"></i>
+                    </div>
+                    <div class="info">
+                        <h5>${g.name}</h5>
+                        <span class="current">RM${monthlyContrib}/mo × 60 months</span>
+                        <span class="future">${formatCurrency(fiveYearValue)}</span>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    // Render projection chart
+    renderSavingsProjectionChart(currentTotal, monthlyTotal);
+}
+
+function renderSavingsProjectionChart(currentTotal, monthlyTotal) {
+    const ctx = document.getElementById('savingsProjectionChart')?.getContext('2d');
+    if (!ctx) return;
+    
+    if (savingsProjectionChart) savingsProjectionChart.destroy();
+    
+    // Generate data for 5 years (yearly intervals)
+    const years = ['Now', 'Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5'];
+    const projectedValues = [];
+    
+    for (let i = 0; i <= 5; i++) {
+        projectedValues.push(currentTotal + (monthlyTotal * 12 * i));
+    }
+    
+    // Calculate compound interest scenario (assuming 4% annual return for ASB)
+    const compoundValues = [];
+    let compoundTotal = currentTotal;
+    compoundValues.push(compoundTotal);
+    
+    for (let i = 1; i <= 5; i++) {
+        // Add yearly contributions and apply 4% interest
+        compoundTotal = (compoundTotal + (monthlyTotal * 12)) * 1.04;
+        compoundValues.push(Math.round(compoundTotal));
+    }
+    
+    savingsProjectionChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: years,
+            datasets: [
+                {
+                    label: 'Regular Savings',
+                    data: projectedValues,
+                    borderColor: '#14b8a6',
+                    backgroundColor: 'rgba(20, 184, 166, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#14b8a6',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 5
+                },
+                {
+                    label: 'With ~4% Returns (ASB)',
+                    data: compoundValues,
+                    borderColor: '#8b5cf6',
+                    backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    borderDash: [5, 5],
+                    pointBackgroundColor: '#8b5cf6',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 5
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        padding: 20
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.dataset.label + ': ' + formatCurrency(context.raw);
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(0,0,0,0.05)' },
+                    ticks: {
+                        callback: function(value) {
+                            return 'RM ' + (value / 1000).toFixed(0) + 'k';
+                        }
+                    }
+                },
+                x: {
+                    grid: { display: false }
+                }
+            }
+        }
+    });
 }
 
 // ===== Render Reports =====
